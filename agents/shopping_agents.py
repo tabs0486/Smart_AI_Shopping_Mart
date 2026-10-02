@@ -1,5 +1,13 @@
 import os
 
+# ---------------------------------------------------------
+# FIX FOR CREWAI + GROQ cache_breakpoint ERROR
+# ---------------------------------------------------------
+import crewai.llms.cache as _crewai_cache
+
+_crewai_cache.mark_cache_breakpoint = lambda msg: msg
+
+
 from crewai import Agent, LLM
 
 
@@ -8,94 +16,97 @@ MODEL_NAME = "groq/openai/gpt-oss-120b"
 
 def get_llm():
     """
-    Create the Groq-powered CrewAI LLM.
-    GROQ_API_KEY must be stored in Streamlit Secrets/environment.
+    Create the Groq LLM used by CrewAI.
     """
-    if not os.getenv("GROQ_API_KEY"):
-        raise ValueError("GROQ_API_KEY is not configured.")
+
+    api_key = os.getenv("GROQ_API_KEY")
+
+    if not api_key:
+        raise ValueError(
+            "GROQ_API_KEY is missing. Please add it to Streamlit Secrets."
+        )
 
     return LLM(
         model=MODEL_NAME,
         temperature=0.2,
         max_tokens=3000,
+        reasoning_effort="medium",
     )
 
 
 def create_agents():
+
     llm = get_llm()
 
     requirement_agent = Agent(
         role="Shopping Requirement Analyst",
         goal=(
             "Understand the customer's shopping request and convert it "
-            "into precise structured requirements."
+            "into structured shopping requirements."
         ),
         backstory=(
-            "You specialize in understanding customer shopping needs, "
-            "budgets, delivery requirements, specifications and product conditions."
+            "You specialize in understanding shopping requirements, "
+            "budget, delivery city, payment methods, product condition, "
+            "ingredients and specifications."
         ),
         llm=llm,
-        verbose=True,
+        verbose=False,
         allow_delegation=False,
     )
 
     search_agent = Agent(
         role="Product Search Coordinator",
         goal=(
-            "Analyze available product-source data and identify products "
-            "that could satisfy the user's requirements."
+            "Identify relevant products from the supplied product sources."
         ),
         backstory=(
-            "You specialize in product discovery across multiple shopping sources. "
-            "You must rely only on supplied product-source information."
+            "You specialize in searching and identifying products "
+            "across multiple shopping sources."
         ),
         llm=llm,
-        verbose=True,
+        verbose=False,
         allow_delegation=False,
     )
 
     filter_agent = Agent(
         role="Product Filtering Specialist",
         goal=(
-            "Filter products according to budget, category, condition, "
-            "delivery city, payment method, deadline and specifications."
+            "Filter products according to the customer's requirements."
         ),
         backstory=(
-            "You are a strict shopping filter. Never claim that a product "
-            "matches a requirement unless the supplied data supports it."
+            "You carefully check price, category, condition, delivery, "
+            "payment method, ingredients and specifications."
         ),
         llm=llm,
-        verbose=True,
+        verbose=False,
         allow_delegation=False,
     )
 
     comparison_agent = Agent(
         role="Product Comparison Analyst",
         goal=(
-            "Compare matching products using price, delivery, payment, "
-            "ingredients, specifications and source information."
+            "Compare matching products using factual product information."
         ),
         backstory=(
-            "You are a product comparison analyst who creates clear "
-            "side-by-side comparisons."
+            "You compare prices, delivery information, payment methods, "
+            "ingredients, specifications and sources."
         ),
         llm=llm,
-        verbose=True,
+        verbose=False,
         allow_delegation=False,
     )
 
     recommendation_agent = Agent(
         role="Shopping Recommendation Assistant",
         goal=(
-            "Present the matching products clearly and explain the important "
-            "differences without inventing unavailable information."
+            "Present the product comparison clearly to the customer."
         ),
         backstory=(
-            "You are a helpful shopping assistant. You present factual "
-            "product information and clearly identify missing information."
+            "You provide clear shopping information and never invent "
+            "prices, delivery dates, ingredients or specifications."
         ),
         llm=llm,
-        verbose=True,
+        verbose=False,
         allow_delegation=False,
     )
 
