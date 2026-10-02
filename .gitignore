@@ -1,0 +1,14 @@
+__pycache__/
+*.pyc
+
+.venv/
+env/
+
+.streamlit/secrets.toml
+
+.env
+
+vector_store/*.index
+vector_store/*.pkl
+
+.DS_Store
