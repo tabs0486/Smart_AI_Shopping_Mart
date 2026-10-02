@@ -1,0 +1,7 @@
+name,category,source,price,discount,condition,delivery_city,delivery_days,payment_method,ingredients,specifications,url
+HP Laptop 15,Electronics,Store A,95000,5,New,Karachi,2,COD|Card,,16GB RAM|512GB SSD,https://example.com/product1
+Lenovo IdeaPad,Electronics,Store B,98500,3,New,Karachi,3,Card,,16GB RAM|512GB SSD,https://example.com/product2
+Dell Inspiron,Electronics,Store C,89999,0,New,Lahore,4,COD,,"8GB RAM|512GB SSD",https://example.com/product3
+Baby Cereal A,Baby Products,Store A,1850,10,New,Karachi,2,COD|Card,"Wheat|Milk|Vitamins","400g",https://example.com/product4
+Baby Cereal B,Baby Products,Store B,2050,5,New,Karachi,3,Card,"Rice|Milk|Iron","500g",https://example.com/product5
+Rice Premium,Grocery,Store C,3200,5,New,Karachi,1,COD,"Rice","5kg",https://example.com/product6
